@@ -18,7 +18,7 @@ interface Client
      * @param string $option
      * @param mixed $value
      *
-     * @throws \Exception if option is not supported
+     * @throws \PhpHttpRpc\API\Exception\UnsupportedOptionException if option is not supported
      */
     public function setOption($option, $value);
 
@@ -27,9 +27,9 @@ interface Client
      *
      * @param array $options
      *
-     * @throws \Exception if an option is not supported
+     * @throws \PhpHttpRpc\API\Exception\UnsupportedOptionException if an option is not supported
      */
-    public function setOptions($options);
+    public function setOptions(array $options);
 
     /**
      * Retrieves the current value for any option
@@ -37,7 +37,7 @@ interface Client
      *
      * @return bool|int|string
      *
-     * @throws \Exception if option is not supported
+     * @throws \PhpHttpRpc\API\Exception\UnsupportedOptionException if option is not supported
      */
     public function getOption($option);
 }

@@ -13,7 +13,7 @@ abstract class Request implements RpcRequestInterface
 
     public function __construct($methodName, $params = array())
     {
-        $this->methodName = $methodName;
+        $this->method($methodName);
         foreach ($params as $param) {
             $this->addParam($param);
         }
@@ -22,6 +22,7 @@ abstract class Request implements RpcRequestInterface
     public function method($methodName = null)
     {
         if ($methodName !== null) {
+            $this->validateMethodName($methodName);
             $this->methodName = $methodName;
         }
 
@@ -30,18 +31,16 @@ abstract class Request implements RpcRequestInterface
 
     public function addParam($param)
     {
-        if ($this->isValidParam($param)) {
-            $this->params[] = $param;
-
-            return true;
-        } else {
-            return false;
-        }
+        $this->validateParam($param);
+        $this->params[] = $param;
     }
 
     public function getParam($i)
     {
-        return $this->params[$i];
+        if (array_key_exists($i, $this->params)) {
+            return $this->params[$i];
+        }
+        throw new \OutOfRangeException("There is no param number $i in the Request");
     }
 
     public function getParams()
@@ -54,9 +53,24 @@ abstract class Request implements RpcRequestInterface
         return count($this->params);
     }
 
-    protected function isValidParam($param)
+    /**
+     * @param string $methodName
+     * @throws \InvalidArgumentException
+     */
+    protected function validateMethodName($methodName)
     {
-        return ($param instanceof $this->allowedParamClass);
+        // left for subclasses to implement
+    }
+
+    /**
+     * @param mixed $param
+     * @throws \InvalidArgumentException
+     */
+    protected function validateParam($param)
+    {
+        if (!($param instanceof $this->allowedParamClass)) {
+            throw new \InvalidArgumentException("Parameter is not of allowed type '{$this->allowedParamClass}'");
+        }
     }
 
     /**

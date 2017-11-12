@@ -2,15 +2,15 @@
 
 namespace PhpHttpRpc\HTTP;
 
-use Http\Client\HttpClient;
 use Psr\Http\Message\RequestInterface;
 use Psr\Http\Message\ResponseInterface;
+use Http\Client\HttpClient;
 use Http\Message\ResponseFactory;
 use PhpHttpRpc\HTTP\Discovery\MessageFactoryDiscovery;
 
 class Client implements HttpClient
 {
-    /** @var RequestFactory $requestFactory */
+    /** @var ResponseFactory $responseFactory */
     protected $responseFactory;
 
     /**

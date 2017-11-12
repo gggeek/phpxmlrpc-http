@@ -26,9 +26,7 @@ interface Request
      *
      * @param Value $param
      *
-     * @return boolean false on failure
-     *
-     * @todo this should throw if received value is not compatible, but that is an API breackage for phpxmlrpc...
+     * @throws \InvalidArgumentException
      */
     public function addParam($param);
 
@@ -39,7 +37,7 @@ interface Request
      *
      * @return Value the i-th parameter.
      *
-     * @todo this should throw if received index is not compatible, but that is an API breackage for phpxmlrpc
+     * @throws \OutOfRangeException
      */
     public function getParam($i);
 

@@ -2,23 +2,92 @@
 
 namespace PhpHttpRpc\Core;
 
+use Psr\Http\Message\RequestInterface as HttpRequestInterface;
+use Psr\Http\Message\ResponseInterface as HttpResponseInterface;
+use Http\Message\RequestFactory;
+use Http\Client\HttpClient as HttpClientInterface;
+use PhpHttpRpc\HTTP\Discovery\HttpClientDiscovery;
+use PhpHttpRpc\HTTP\Discovery\MessageFactoryDiscovery;
 use PhpHttpRpc\API\Client as RpcClientInterface;
 use PhpHttpRpc\API\Request as RpcRequestInterface;
 use PhpHttpRpc\API\Response as RpcResponseInterface;
-use Psr\Http\Message\RequestInterface as HttpRequestInterface;
-use Psr\Http\Message\ResponseInterface as HttpResponseInterface;
-use Http\Client\HttpClient as HttpClientInterface;
-use Http\Message\RequestFactory;
-use PhpHttpRpc\HTTP\Discovery\HttpClientDiscovery;
-use PhpHttpRpc\HTTP\Discovery\MessageFactoryDiscovery;
+use PhpHttpRpc\API\Exception\UnsupportedOptionException;
 
 abstract class Client implements RpcClientInterface
 {
-    protected $options = array();
+    const USE_CURL_NEVER = 0;
+    const USE_CURL_ALWAYS = 1;
+    const USE_CURL_AUTO = 2;
+
+    const RETURN_VALUE = 0;
+    const RETURN_PHP = 1;
+    const RETURN_RAW = 2;
+
+    protected $options = array(
+        'timeout' => null,
+        'keepAlive' => true,
+        'userAgent' => null,
+
+        'username' => null,
+        'password' => null,
+        'authType' => null,
+
+        'requestCompression' => null,
+        'acceptedCompression' => null,
+        'acceptedCharsetEncodings' => null,
+        'httpVersion' => null,
+
+        'proxyHost' => null,
+        'proxyPort' => null,
+        'proxyUsername' => null,
+        'proxyPassword' => null,
+        'proxyAuthType' => null,
+
+        'SSLVersion' => null,
+        'SSLVerifyHost' => null,
+        'SSLVerifyPeer' => null,
+        'SSLCert' => null,
+        'SSLCertPass' => null,
+        'SSLCACert' => null,
+        'SSLCACertDir' => null,
+        'SSLKey' => null,
+        'SSLKeyPass' => null,
+
+        'useCURL' => self::USE_CURL_AUTO,
+        'returnType' => self::RETURN_VALUE,
+        'debug' => null,
+    );
+
     /** @var HttpClientInterface $httpClient */
     protected $httpClient;
     /** @var RequestFactory $requestFactory */
     protected $requestFactory;
+
+    /**
+     * Client constructor.
+     * @param string $uri
+     * @param array $options
+     */
+    public function __construct($uri, array $options = array())
+    {
+        if (!isset($options['httpClient'])) {
+            $client = $options['httpClient'];
+            unset($options['httpClient']);
+        } else {
+            $client = HttpClientDiscovery::find();
+        }
+        $this->setHTTPClient($client);
+
+        if (!isset($options['requestFactory'])) {
+            $requestFactory = $options['requestFactory'];
+            unset($options['requestFactory']);
+        } else {
+            $requestFactory = MessageFactoryDiscovery::find();
+        }
+        $this->setRequestFactory($requestFactory);
+
+        $this->setOptions($options);
+    }
 
     /**
      * Sends a request and returns the response object.
@@ -45,11 +114,31 @@ abstract class Client implements RpcClientInterface
      * @param string $option
      * @param mixed $value
      *
-     * @throws \Exception if option is not supported
+     * @throws UnsupportedOptionException if option is not supported or valid
      */
     public function setOption($option, $value)
     {
-        /// @todo
+        if (!array_key_exists($option, $this->options) )
+        {
+            throw new UnsupportedOptionException("Option $option is not supported");
+        }
+
+        switch ($option) {
+            default:
+                $this->validateOption($option, $value);
+                $this->options[$option] = $value;
+        }
+    }
+
+    /**
+     * @param string $option
+     * @param mixed $value
+     *
+     * @throws UnsupportedOptionException if option is not valid
+     */
+    protected function validateOption($option, $value)
+    {
+        // left for subclasses to implement
     }
 
     /**
@@ -57,11 +146,14 @@ abstract class Client implements RpcClientInterface
      *
      * @param array $options
      *
-     * @throws \Exception if an option is not supported
+     * @throws UnsupportedOptionException if an option is not supported
      */
-    public function setOptions($options)
+    public function setOptions(array $options)
     {
-        /// @todo
+        foreach($options as $name => $value)
+        {
+            $this->setOption($name, $value);
+        }
     }
 
     /**
@@ -70,11 +162,14 @@ abstract class Client implements RpcClientInterface
      *
      * @return bool|int|string
      *
-     * @throws \Exception if option is not supported
+     * @throws UnsupportedOptionException if option is not supported
      */
     public function getOption($option)
     {
-        /// @todo
+        if (!array_key_exists($option, $this->options) )
+        {
+            throw new UnsupportedOptionException("Option $option is not supported");
+        }
     }
 
     public function setRequestFactory(RequestFactory $requestFactory)
@@ -112,11 +207,13 @@ abstract class Client implements RpcClientInterface
 
     protected function getHTTPRequestHeaders(array $headers = array())
     {
+        /// @todo add all our own headers
         return $headers;
     }
 
     protected function getHTTPRequestBody($body)
     {
+        /// @todo compress if needed
         return $body;
     }
 
