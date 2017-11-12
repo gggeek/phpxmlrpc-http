@@ -11,7 +11,7 @@ interface Client
      * @param Request $request
      * @return Response
      */
-    public function send($request);
+    public function send(Request $request);
 
     /**
      * One-stop shop for setting all configuration options without having to write a hundred method calls

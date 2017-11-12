@@ -2,26 +2,26 @@
 
 namespace PhpHttpRpc\Core;
 
-use PhpHttpRpc\API\Response as ResponseInterface;
+use PhpHttpRpc\API\Response as RpcResponseInterface;
 
-abstract class Response implements ResponseInterface
+abstract class Response implements RpcResponseInterface
 {
-    protected $errno = 0;
-    protected $errstr = '';
-    protected $val;
+    protected $errNo = 0;
+    protected $errStr = '';
+    protected $value;
 
     public function faultCode()
     {
-        return $this->errno;
+        return $this->errNo;
     }
 
     public function faultString()
     {
-        return $this->errstr;
+        return $this->errStr;
     }
 
     public function value()
     {
-        return $this->val;
+        return $this->value;
     }
 }

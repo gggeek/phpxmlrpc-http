@@ -2,10 +2,16 @@
 
 namespace PhpHttpRpc\Core;
 
-use PhpHttpRpc\API\Client as ClientInterface;
+use PhpHttpRpc\API\Client as RpcClientInterface;
+use PhpHttpRpc\API\Request as RpcRequestInterface;
+use PhpHttpRpc\API\Response as RpcResponseInterface;
+use Psr\Http\Message\RequestInterface as HttpRequestInterface;
+use Psr\Http\Message\ResponseInterface as HttpResponseInterface;
+use Http\Client\HttpClient as HttpClientInterface;
 
-abstract class Client implements ClientInterface
+abstract class Client implements RpcClientInterface
 {
+    /** @var  HttpClientInterface $httpClient */
     protected $httpClient;
     protected $options = array();
 
@@ -13,12 +19,21 @@ abstract class Client implements ClientInterface
      * Sends a request and returns the response object.
      * Note that the client will always return a Response object, even if the call fails
      *
-     * @param Request $request
-     * @return Response
+     * @param RpcRequestInterface $request
+     * @return RpcResponseInterface
      */
-    public function send($request)
+    public function send(RpcRequestInterface $request)
     {
-        /// @todo build http-Request, send it using $this->httpClient, get http-Response, create Rpc-Resp. and handle to it http-Response for parsing
+        // build http-Request from RPC-request plus internal options, send it using $this->httpClient, get http-Response,
+        //  create Rpc-Resp. and handle to it http-Response for parsing
+        $httpRequest = $this->buildHttpRequest($request);
+        try {
+            $httpResponse = $this->httpClient->sendRequest($httpRequest);
+            $rpcResponse = $this->buildRpcResponse($request, $httpResponse);
+            return $rpcResponse;
+        } catch(\Exception $e) {
+            return $this->buildErrorResponse($e);
+        }
     }
 
     /**
@@ -28,8 +43,9 @@ abstract class Client implements ClientInterface
      *
      * @throws \Exception if option is not supported
      */
-    function setOption($option, $value)
+    public function setOption($option, $value)
     {
+        /// @todo
     }
 
     /**
@@ -41,6 +57,7 @@ abstract class Client implements ClientInterface
      */
     public function setOptions($options)
     {
+        /// @todo
     }
 
     /**
@@ -53,5 +70,37 @@ abstract class Client implements ClientInterface
      */
     public function getOption($option)
     {
+        /// @todo
+    }
+
+    /**
+     * @param RpcRequestInterface $request
+     *
+     * @return HttpRequestInterface
+     */
+    protected function buildHttpRequest(RpcRequestInterface $request)
+    {
+        /// @todo
+    }
+
+    /**
+     * @param RpcRequestInterface $request
+     * @param HttpResponseInterface $response
+     *
+     * @return RpcResponseInterface
+     */
+    protected function buildRpcResponse(RpcRequestInterface $request, HttpResponseInterface $response)
+    {
+        /// @todo
+    }
+
+    /**
+     * @param \Exception $e
+     *
+     * @return RpcResponseInterface
+     */
+    protected function buildErrorResponse(\Exception $e)
+    {
+        /// @todo
     }
 }

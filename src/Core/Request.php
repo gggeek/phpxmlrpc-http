@@ -3,9 +3,9 @@
 namespace PhpHttpRpc\Core;
 
 use PhpHttpRpc\API\Value;
-use PhpHttpRpc\API\Request as RequestInterface;
+use PhpHttpRpc\API\Request as RpcRequestInterface;
 
-abstract class Request implements RequestInterface
+abstract class Request implements RpcRequestInterface
 {
     protected $methodname;
     protected $params = array();
