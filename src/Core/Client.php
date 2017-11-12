@@ -19,23 +19,26 @@ abstract class Client implements RpcClientInterface
     const USE_CURL_ALWAYS = 1;
     const USE_CURL_AUTO = 2;
 
-    const RETURN_VALUE = 0;
-    const RETURN_PHP = 1;
-    const RETURN_RAW = 2;
+    const EXCEPTIONS_NEVER = 0; // never throw exceptions, always return a Response
+    const EXCEPTIONS_TRANSPORT = 1; // throws exceptions for all transport-layer (http) errors
+    const EXCEPTIONS_RESPONSE_FORMAT = 2; // throws exceptions for all errors decoding the body of the Response
+    const EXCEPTIONS_PROTOCOL = 4; // throws exceptions for in-protocol errors
+    const EXCEPTIONS_ALWAYS = 7; // always throw exceptions
 
     protected $options = array(
-        'timeout' => null,
+        'httpVersion' => null,
         'keepAlive' => true,
         'userAgent' => null,
+        'acceptedCharsetEncodings' => null,
+        'timeout' => null,
+        'useCURL' => self::USE_CURL_AUTO,
+
+        'requestCompression' => null,
+        'acceptedCompression' => null,
 
         'username' => null,
         'password' => null,
         'authType' => null,
-
-        'requestCompression' => null,
-        'acceptedCompression' => null,
-        'acceptedCharsetEncodings' => null,
-        'httpVersion' => null,
 
         'proxyHost' => null,
         'proxyPort' => null,
@@ -53,8 +56,8 @@ abstract class Client implements RpcClientInterface
         'SSLKey' => null,
         'SSLKeyPass' => null,
 
-        'useCURL' => self::USE_CURL_AUTO,
-        'returnType' => self::RETURN_VALUE,
+        'useExceptions' => self::EXCEPTIONS_ALWAYS,
+        'returnType' => Response::RETURN_VALUE,
         'debug' => null,
     );
 
@@ -225,15 +228,24 @@ abstract class Client implements RpcClientInterface
 
     /**
      * @param RpcRequestInterface $request
-     * @param HttpResponseInterface $response
+     * @param HttpResponseInterface $httpResponse
      *
      * @return RpcResponseInterface
      */
-    protected function buildRpcResponse(RpcRequestInterface $request, HttpResponseInterface $response)
+    protected function buildRpcResponse(RpcRequestInterface $request, HttpResponseInterface $httpResponse)
     {
-        $headers = $response->getHeaders();
-        $body = (string)$response->getBody();
-        return $request->parseHTTPResponse($body, $headers);
+        $headers = $httpResponse->getHeaders();
+        $body = (string)$httpResponse->getBody();
+        return $request->expectedResponse()->parseHTTPResponse(
+            $request,
+            $body,
+            $headers,
+            array(
+                'debug' => $this->getOption('debug'),
+                'returnType' => $this->getOption('returnType'),
+                'useExceptions' => $this->getOption('useExceptions'),
+            )
+        );
     }
 
     /**

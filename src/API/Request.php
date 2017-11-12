@@ -56,6 +56,13 @@ interface Request
     public function getNumParams();
 
     /**
+     * Returns an (uninitialized) instance of the correct Response subclass for this Request
+     *
+     * @return Response
+     */
+    public function expectedResponse();
+
+    /**
      * Retrieves the method of the HTTP request.
      * Will be called when this request is serialized for sending
      *
@@ -92,12 +99,4 @@ interface Request
      * @return string
      */
     public function getHTTPBody();
-
-    /**
-     * @param string $body
-     * @param array $headers
-     * @param array $options
-     * @return Response
-     */
-    public function parseHTTPResponse($body, array $headers = array(), array $options = array());
 }

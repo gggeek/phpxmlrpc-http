@@ -10,6 +10,7 @@ abstract class Request implements RpcRequestInterface
     protected $params = array();
     protected $contentType = '';
     protected $allowedParamClass = '\PhpHttpRpc\API\Value';
+    protected $expectedResponseClass = '\PhpHttpRpc\Core\Response';
 
     public function __construct($methodName, $params = array())
     {
@@ -73,12 +74,18 @@ abstract class Request implements RpcRequestInterface
         }
     }
 
+    public function expectedResponse()
+    {
+        $class = $this->expectedResponseClass;
+        return new $class();
+    }
+
     /**
      * The default implementation does not modify the original URI
      * @param string $uri
      * @return string
      */
-    public function witHTTPhUri($uri)
+    public function withHTTPUri($uri)
     {
         return $uri;
     }
@@ -102,6 +109,4 @@ abstract class Request implements RpcRequestInterface
     }
 
     abstract public function getHTTPBody();
-
-    abstract public function parseHTTPResponse($body, array $headers = array(), array $options = array());
 }
