@@ -1,9 +1,14 @@
 <?php
 
-namespace PhpHttpRpc\API;
+namespace PhpHttpRpc\Core;
 
-interface Client
+use PhpHttpRpc\API\Client as ClientInterface;
+
+abstract class Client implements ClientInterface
 {
+    protected $httpClient;
+    protected $options = array();
+
     /**
      * Sends a request and returns the response object.
      * Note that the client will always return a Response object, even if the call fails
@@ -11,7 +16,10 @@ interface Client
      * @param Request $request
      * @return Response
      */
-    public function send($request);
+    public function send($request)
+    {
+        /// @todo build http-Request, send it using $this->httpClient, get http-Response, create Rpc-Resp. and handle to it http-Response for parsing
+    }
 
     /**
      * One-stop shop for setting all configuration options without having to write a hundred method calls
@@ -20,7 +28,9 @@ interface Client
      *
      * @throws \Exception if option is not supported
      */
-    public function setOption($option, $value);
+    function setOption($option, $value)
+    {
+    }
 
     /**
      * Set many options in one fell swoop
@@ -29,7 +39,9 @@ interface Client
      *
      * @throws \Exception if an option is not supported
      */
-    public function setOptions($options);
+    public function setOptions($options)
+    {
+    }
 
     /**
      * Retrieves the current value for any option
@@ -39,5 +51,7 @@ interface Client
      *
      * @throws \Exception if option is not supported
      */
-    public function getOption($option);
+    public function getOption($option)
+    {
+    }
 }
