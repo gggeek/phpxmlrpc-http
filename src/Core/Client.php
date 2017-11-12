@@ -8,12 +8,17 @@ use PhpHttpRpc\API\Response as RpcResponseInterface;
 use Psr\Http\Message\RequestInterface as HttpRequestInterface;
 use Psr\Http\Message\ResponseInterface as HttpResponseInterface;
 use Http\Client\HttpClient as HttpClientInterface;
+use Http\Message\RequestFactory;
+use PhpHttpRpc\HTTP\Discovery\HttpClientDiscovery;
+use PhpHttpRpc\HTTP\Discovery\MessageFactoryDiscovery;
 
 abstract class Client implements RpcClientInterface
 {
-    /** @var  HttpClientInterface $httpClient */
-    protected $httpClient;
     protected $options = array();
+    /** @var HttpClientInterface $httpClient */
+    protected $httpClient;
+    /** @var RequestFactory $requestFactory */
+    protected $requestFactory;
 
     /**
      * Sends a request and returns the response object.
@@ -24,10 +29,9 @@ abstract class Client implements RpcClientInterface
      */
     public function send(RpcRequestInterface $request)
     {
-        // build http-Request from RPC-request plus internal options, send it using $this->httpClient, get http-Response,
-        //  create Rpc-Resp. and handle to it http-Response for parsing
-        $httpRequest = $this->buildHttpRequest($request);
         try {
+            // q: how do we pass to $this->httpClient all the info about the desired options ? HTTPlug uses plugins...
+            $httpRequest = $this->buildHttpRequest($request);
             $httpResponse = $this->httpClient->sendRequest($httpRequest);
             $rpcResponse = $this->buildRpcResponse($request, $httpResponse);
             return $rpcResponse;
@@ -73,6 +77,16 @@ abstract class Client implements RpcClientInterface
         /// @todo
     }
 
+    public function setRequestFactory(RequestFactory $requestFactory)
+    {
+        $this->requestFactory = $requestFactory;
+    }
+
+    public function setHTTPClient(HttpClientInterface $client)
+    {
+        $this->httpClient = $client;
+    }
+
     /**
      * @param RpcRequestInterface $request
      *
@@ -80,7 +94,36 @@ abstract class Client implements RpcClientInterface
      */
     protected function buildHttpRequest(RpcRequestInterface $request)
     {
+        $httpRequest = $this->requestFactory->createRequest(
+            $request->getHTTPMethod(),
+            $request->withHTTPUri($this->getUri()),
+            $this->getHTTPRequestHeaders($request->getHTTPHeaders()),
+            $this->getHTTPRequestBody($request->getHTTPBody()),
+            $this->getHTTPRequestProtocolVersion()
+        );
+
+        return $httpRequest;
+    }
+
+    protected function getUri()
+    {
         /// @todo
+    }
+
+    protected function getHTTPRequestHeaders(array $headers = array())
+    {
+        return $headers;
+    }
+
+    protected function getHTTPRequestBody($body)
+    {
+        return $body;
+    }
+
+    protected function getHTTPRequestProtocolVersion()
+    {
+        /// @todo allow options to modify this
+        return '1.1';
     }
 
     /**
@@ -91,7 +134,9 @@ abstract class Client implements RpcClientInterface
      */
     protected function buildRpcResponse(RpcRequestInterface $request, HttpResponseInterface $response)
     {
-        /// @todo
+        $headers = $response->getHeaders();
+        $body = (string)$response->getBody();
+        return $request->parseHTTPResponse($body, $headers);
     }
 
     /**

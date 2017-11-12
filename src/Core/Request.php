@@ -2,34 +2,35 @@
 
 namespace PhpHttpRpc\Core;
 
-use PhpHttpRpc\API\Value;
 use PhpHttpRpc\API\Request as RpcRequestInterface;
 
 abstract class Request implements RpcRequestInterface
 {
-    protected $methodname;
+    protected $methodName;
     protected $params = array();
+    protected $contentType = '';
+    protected $allowedParamClass = '\PhpHttpRpc\API\Value';
 
     public function __construct($methodName, $params = array())
     {
-        $this->methodname = $methodName;
+        $this->methodName = $methodName;
         foreach ($params as $param) {
             $this->addParam($param);
         }
     }
 
-    public function method($methodName = '')
+    public function method($methodName = null)
     {
-        if ($methodName != '') {
-            $this->methodname = $methodName;
+        if ($methodName !== null) {
+            $this->methodName = $methodName;
         }
 
-        return $this->methodname;
+        return $this->methodName;
     }
 
     public function addParam($param)
     {
-        if (is_object($param) && $param instanceof Value) {
+        if ($this->isValidParam($param)) {
             $this->params[] = $param;
 
             return true;
@@ -52,4 +53,41 @@ abstract class Request implements RpcRequestInterface
     {
         return count($this->params);
     }
+
+    protected function isValidParam($param)
+    {
+        return ($param instanceof $this->allowedParamClass);
+    }
+
+    /**
+     * The default implementation does not modify the original URI
+     * @param string $uri
+     * @return string
+     */
+    public function witHTTPhUri($uri)
+    {
+        return $uri;
+    }
+
+    /**
+     * The default is to use POST requests
+     * @return string
+     */
+    public function getHTTPMethod()
+    {
+        return 'POST';
+    }
+
+    public function getHTTPHeaders()
+    {
+        return array(
+            'Content-Type' => array($this->contentType)
+        );
+
+        // @todo if method is POST, should we add Content-Length as well? Or leave it to the Client?
+    }
+
+    abstract public function getHTTPBody();
+
+    abstract public function parseHTTPResponse($body, array $headers = array(), array $options = array());
 }

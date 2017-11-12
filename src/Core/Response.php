@@ -24,4 +24,29 @@ abstract class Response implements RpcResponseInterface
     {
         return $this->value;
     }
+
+    /**
+     * Will be called when this response is serialized for sending
+     *
+     * @return string[][] Returns an associative array of the response's headers. Each
+     *     key MUST be a header name, and each value MUST be an array of strings
+     *     for that header.
+     */
+    abstract public function getHTTPHeaders();
+
+    /**
+     * Will be called when this response is serialized for sending
+     * Q: should we return a (plain php) stream instead?
+     *
+     * @return string
+     */
+    abstract public function getHTTPBody();
+
+    /**
+     * @param string $body
+     * @param array $headers
+     * @param array $options
+     * @return Response
+     */
+    abstract public function parseHTTPResponse($body, array $headers = array(), array $options = array());
 }
