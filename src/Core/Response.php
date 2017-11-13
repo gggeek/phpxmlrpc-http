@@ -11,6 +11,13 @@ abstract class Response implements RpcResponseInterface
     protected $faultString = '';
     protected $value;
 
+    public function __construct($value = null)
+    {
+        if ($value !== null) {
+            $this->setValue($value);
+        }
+    }
+
     public function faultCode()
     {
         return $this->faultCode;

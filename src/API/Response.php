@@ -9,6 +9,15 @@ interface Response
     const RETURN_RAW = 2; // Return the HTTP response body as string
 
     /**
+     * @param Value|Fault|string|mixed|null $value the value to initialize the Response with, unless null is passed in
+     *
+     * Q: currently the logic allows to create a non-initialized response, and call on it parseHTTPResponse() to init it.
+     *    This is good but it allows also to have around non-initialized Responses.
+     *    Another, possibly better, option, would be to make the parseHTTPResponse method static...
+     */
+    public function __construct($value = null);
+
+    /**
      * @param Value|Fault|string|mixed $value
      * @return self
      */
