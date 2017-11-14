@@ -26,6 +26,11 @@ abstract class Request implements RpcRequestInterface
         $this->methodName = $methodName;
     }
 
+    public function getMethodName()
+    {
+        return $this->methodName;
+    }
+
     protected function addParam($param)
     {
         $this->validateParam($param);

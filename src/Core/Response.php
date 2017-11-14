@@ -79,6 +79,4 @@ abstract class Response implements RpcResponseInterface
      * @return string
      */
     abstract public function getHTTPBody();
-
-    abstract public function parseHTTPResponse($request, $body, array $headers = array(), array $options = array());
 }
