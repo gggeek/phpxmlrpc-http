@@ -6,9 +6,9 @@ interface Request
 {
     /**
      * @param string $methodName the name of the method to invoke
-     * @param Value[] $params array of parameters to be passed to the method (NB: Value objects, not plain php values)
+     * @param mixed[]|Value[] $params array of parameters to be passed to the method
      */
-    public function __construct($methodName, $params = array());
+    public function __construct($methodName, array $params = array());
 
     /**
      * Gets the method to be invoked.

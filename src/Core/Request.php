@@ -3,16 +3,16 @@
 namespace PhpHttpRpc\Core;
 
 use PhpHttpRpc\API\Request as RpcRequestInterface;
+use PhpHttpRpc\API\ResponseFactory as ResponseFactoryInterface;
 
-abstract class Request implements RpcRequestInterface
+abstract class Request implements RpcRequestInterface, ResponseFactoryInterface
 {
     protected $methodName;
     protected $params = array();
     protected $contentType = '';
-    protected $allowedParamClass = '\PhpHttpRpc\API\Value';
     protected $responseFactoryClass = '\PhpHttpRpc\Core\ResponseFactory';
 
-    public function __construct($methodName, $params = array())
+    public function __construct($methodName, array $params = array())
     {
         $this->setMethodName($methodName);
         foreach ($params as $param) {
@@ -70,15 +70,12 @@ abstract class Request implements RpcRequestInterface
      */
     protected function validateParam($param)
     {
-        if (!($param instanceof $this->allowedParamClass)) {
-            throw new \InvalidArgumentException("Parameter is not of allowed type '{$this->allowedParamClass}'");
-        }
+        // left for subclasses to override
     }
 
     public function getResponseFactory()
     {
-        $class = $this->responseFactoryClass;
-        return new $class();
+        return new $this;
     }
 
     /**
@@ -110,4 +107,6 @@ abstract class Request implements RpcRequestInterface
     }
 
     abstract public function getHTTPBody();
+
+    abstract public function parseHTTPResponse($request, $body, array $headers = array(), array $options = array());
 }
