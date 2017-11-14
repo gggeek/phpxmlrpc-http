@@ -6,10 +6,9 @@ use Psr\Http\Message\UriInterface;
 use Psr\Http\Message\RequestInterface;
 use Psr\Http\Message\StreamInterface;
 use Psr\Http\Message\ResponseInterface;
-use Http\Message\RequestFactory as RequestFactoryInterface;
-use Http\Message\ResponseFactory as ResponseFactoryInterface;
+use Http\Message\MessageFactory as MessageFactoryInterface;
 
-class MessageFactory implements RequestFactoryInterface, ResponseFactoryInterface
+class MessageFactory implements MessageFactoryInterface
 {
     /**
      * Creates a new PSR-7 request.

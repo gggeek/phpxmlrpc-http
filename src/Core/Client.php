@@ -211,7 +211,7 @@ abstract class Client implements RpcClientInterface
      */
     protected function buildHttpRequest(RpcRequestInterface $request)
     {
-        $httpRequest = $this->requestFactory->createRequest(
+        $httpRequest = $this->httpRequestFactory->createRequest(
             $request->getHTTPMethod(),
             $request->withHTTPUri($this->getUri()),
             $this->getHTTPRequestHeaders($request->getHTTPHeaders()),
