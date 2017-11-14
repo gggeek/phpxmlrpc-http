@@ -4,16 +4,8 @@ namespace PhpHttpRpc\API;
 
 interface Response
 {
-    const RETURN_VALUE = 0; // Return objects of type Value (subclasess thereof)
-    const RETURN_PHP = 1; // Return plain php values
-    const RETURN_RAW = 2; // Return the HTTP response body as string
-
     /**
-     * @param Value|Fault|string|mixed|null $value the value to initialize the Response with, unless null is passed in
-     *
-     * Q: currently the logic allows to create a non-initialized response, and call on it parseHTTPResponse() to init it.
-     *    This is good but it allows also to have around non-initialized Responses.
-     *    Another, possibly better, option, would be to make the parseHTTPResponse method static...
+     * @param Value|Fault|\Exception|string|mixed $value the value to initialize the Response with
      */
     public function __construct($value = null);
 
@@ -64,13 +56,4 @@ interface Response
      * @return string
      */
     public function getHTTPBody();
-
-    /**
-     * @param Request $request
-     * @param string $body
-     * @param array $headers
-     * @param array $options Allowed keys: 'debug', 'returnType', 'useExceptions'
-     * @return Response
-     */
-    public function parseHTTPResponse($request, $body, array $headers = array(), array $options = array());
 }

@@ -56,11 +56,11 @@ interface Request
     public function getNumParams();
 
     /**
-     * Returns an (uninitialized) instance of the correct Response subclass for this Request
+     * Returns an instance of the correct ResponseFactory subclass for this Request
      *
-     * @return Response
+     * @return ResponseFactory
      */
-    public function expectedResponse();
+    public function getResponseFactory();
 
     /**
      * Retrieves the method of the HTTP request.

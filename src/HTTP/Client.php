@@ -15,8 +15,9 @@ class Client implements HttpClient
 
     /**
      * @param ResponseFactory|null $responseFactory to create PSR-7 responses.
+     * @param array $options
      */
-    public function __construct(ResponseFactory $responseFactory = null)
+    public function __construct(ResponseFactory $responseFactory = null, array $options = array())
     {
         $this->responseFactory = $responseFactory ?: MessageFactoryDiscovery::find();
     }

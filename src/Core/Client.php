@@ -11,6 +11,7 @@ use PhpHttpRpc\HTTP\Discovery\MessageFactoryDiscovery;
 use PhpHttpRpc\API\Client as RpcClientInterface;
 use PhpHttpRpc\API\Request as RpcRequestInterface;
 use PhpHttpRpc\API\Response as RpcResponseInterface;
+use PhpHttpRpc\API\ResponseFactory;
 use PhpHttpRpc\API\Exception\UnsupportedOptionException;
 
 abstract class Client implements RpcClientInterface
@@ -57,8 +58,8 @@ abstract class Client implements RpcClientInterface
         'SSLKeyPass' => null,
 
         'useExceptions' => self::EXCEPTIONS_ALWAYS,
-        'returnType' => Response::RETURN_VALUE,
-        'debug' => null,
+        'returnType' => ResponseFactory::RETURN_VALUE,
+        'debug' => 0,
     );
 
     /** @var HttpClientInterface $httpClient */
@@ -77,7 +78,7 @@ abstract class Client implements RpcClientInterface
             $client = $options['httpClient'];
             unset($options['httpClient']);
         } else {
-            $client = HttpClientDiscovery::find();
+            $client = HttpClientDiscovery::find($options);
         }
         $this->setHTTPClient($client);
 
@@ -236,7 +237,7 @@ abstract class Client implements RpcClientInterface
     {
         $headers = $httpResponse->getHeaders();
         $body = (string)$httpResponse->getBody();
-        return $request->expectedResponse()->parseHTTPResponse(
+        return $request->getResponseFactory()->parseHTTPResponse(
             $request,
             $body,
             $headers,

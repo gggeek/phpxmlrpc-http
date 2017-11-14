@@ -30,6 +30,7 @@ class MessageFactory implements RequestFactoryInterface, ResponseFactoryInterfac
         $protocolVersion = '1.1'
     ) {
         /// @todo
+        return new Request();
     }
 
     /**
@@ -51,5 +52,6 @@ class MessageFactory implements RequestFactoryInterface, ResponseFactoryInterfac
         $protocolVersion = '1.1'
     ) {
         /// @todo
+        return new Response();
     }
 }

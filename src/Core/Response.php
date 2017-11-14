@@ -13,9 +13,15 @@ abstract class Response implements RpcResponseInterface
 
     public function __construct($value = null)
     {
-        if ($value !== null) {
-            $this->setValue($value);
+        if ($value instanceof \Exception) {
+            return $this->setFault($value->getCode(), $value->getMessage());
         }
+
+        if ($value instanceof Fault) {
+            return $this->setFault($value->faultCode(), $value->faultString());
+        }
+
+        return $this->setNonFault($value);
     }
 
     public function faultCode()
@@ -31,19 +37,6 @@ abstract class Response implements RpcResponseInterface
     public function value()
     {
         return $this->value;
-    }
-
-    public function setValue($value)
-    {
-        if ($value instanceof \Exception) {
-            return $this->setFault($value->getCode(), $value->getMessage());
-        }
-
-        if ($value instanceof Fault) {
-            return $this->setFault($value->faultCode(), $value->faultString());
-        }
-
-        return $this->setNonFault($value);
     }
 
     protected function setFault($faultCode, $faultString)

@@ -10,7 +10,7 @@ abstract class Request implements RpcRequestInterface
     protected $params = array();
     protected $contentType = '';
     protected $allowedParamClass = '\PhpHttpRpc\API\Value';
-    protected $expectedResponseClass = '\PhpHttpRpc\Core\Response';
+    protected $responseFactoryClass = '\PhpHttpRpc\Core\ResponseFactory';
 
     public function __construct($methodName, $params = array())
     {
@@ -74,9 +74,9 @@ abstract class Request implements RpcRequestInterface
         }
     }
 
-    public function expectedResponse()
+    public function getResponseFactory()
     {
-        $class = $this->expectedResponseClass;
+        $class = $this->responseFactoryClass;
         return new $class();
     }
 

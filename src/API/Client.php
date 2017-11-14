@@ -4,6 +4,8 @@ namespace PhpHttpRpc\API;
 
 interface Client
 {
+    public function __construct($uri, array $options = array());
+
     /**
      * Sends a request and returns the response object.
      * Note that the client will always return a Response object, even if the call fails
