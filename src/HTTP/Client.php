@@ -36,6 +36,9 @@ class Client implements HttpClient
      *
      * @throws \Http\Client\Exception If an error happens during processing the request.
      * @throws \Exception             If processing the request is impossible (eg. bad configuration).
+     *
+     * @todo see https://github.com/php-http/fig-standards/blob/master/proposed/http-client/http-client.md for structured
+     *       exceptions that we might throw here
      */
     public function sendRequest(RequestInterface $request)
     {

@@ -11,24 +11,11 @@ interface Request
     public function __construct($methodName, $params = array());
 
     /**
-     * Gets/sets the method to be invoked.
-     *
-     * @param string $methodName the method to be set (leave empty not to set it)
+     * Gets the method to be invoked.
      *
      * @return string the method that will be invoked
      */
-    public function method($methodName = null);
-
-    /**
-     * Adds a parameter to the list of parameters to be used upon method invocation.
-     *
-     * Checks that $params is actually a Value object and not a plain php value.
-     *
-     * @param Value $param
-     *
-     * @throws \InvalidArgumentException
-     */
-    public function addParam($param);
+    public function getMethodName();
 
     /**
      * Returns the nth parameter in the request. The index zero-based.

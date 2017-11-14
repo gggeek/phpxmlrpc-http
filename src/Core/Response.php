@@ -11,7 +11,7 @@ abstract class Response implements RpcResponseInterface
     protected $faultString = '';
     protected $value;
 
-    public function __construct($value = null)
+    public function __construct($value)
     {
         if ($value instanceof \Exception) {
             return $this->setFault($value->getCode(), $value->getMessage());
@@ -20,6 +20,8 @@ abstract class Response implements RpcResponseInterface
         if ($value instanceof Fault) {
             return $this->setFault($value->faultCode(), $value->faultString());
         }
+
+        /// @todo any other well-known 'fault' classes that we should handle ?
 
         return $this->setNonFault($value);
     }

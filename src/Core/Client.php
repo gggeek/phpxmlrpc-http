@@ -64,8 +64,8 @@ abstract class Client implements RpcClientInterface
 
     /** @var HttpClientInterface $httpClient */
     protected $httpClient;
-    /** @var RequestFactory $requestFactory */
-    protected $requestFactory;
+    /** @var RequestFactory $httpRequestFactory */
+    protected $httpRequestFactory;
 
     /**
      * Client constructor.
@@ -79,16 +79,22 @@ abstract class Client implements RpcClientInterface
             unset($options['httpClient']);
         } else {
             $client = HttpClientDiscovery::find($options);
+            // We allow the httpClient to handle the 'httpResponseFactory' option without storing it locally
+            // This gives us flexibility, even thought it is a small violation of architectural principles (this class
+            // should not know what HttpClientDiscovery does with options...)
+            if (isset($options['httpResponseFactory'])) {
+                unset($options['httpResponseFactory']);
+            }
         }
         $this->setHTTPClient($client);
 
-        if (!isset($options['requestFactory'])) {
-            $requestFactory = $options['requestFactory'];
-            unset($options['requestFactory']);
+        if (!isset($options['httpRequestFactory'])) {
+            $requestFactory = $options['httpRequestFactory'];
+            unset($options['httpRequestFactory']);
         } else {
             $requestFactory = MessageFactoryDiscovery::find();
         }
-        $this->setRequestFactory($requestFactory);
+        $this->setHTTPRequestFactory($requestFactory);
 
         $this->setOptions($options);
     }
@@ -103,7 +109,6 @@ abstract class Client implements RpcClientInterface
     public function send(RpcRequestInterface $request)
     {
         try {
-            // q: how do we pass to $this->httpClient all the info about the desired options ? HTTPlug uses plugins...
             $httpRequest = $this->buildHttpRequest($request);
             $httpResponse = $this->httpClient->sendRequest($httpRequest);
             $rpcResponse = $this->buildRpcResponse($request, $httpResponse);
@@ -120,7 +125,7 @@ abstract class Client implements RpcClientInterface
      *
      * @throws UnsupportedOptionException if option is not supported or valid
      */
-    public function setOption($option, $value)
+    protected function setOption($option, $value)
     {
         if (!array_key_exists($option, $this->options) )
         {
@@ -132,6 +137,9 @@ abstract class Client implements RpcClientInterface
                 $this->validateOption($option, $value);
                 $this->options[$option] = $value;
         }
+
+        // NB: if by subclassing you make this class non-immutable, you should probably re-validate (rebuild?) the chosen
+        // http client here, unless you do it on send()
     }
 
     /**
@@ -152,12 +160,15 @@ abstract class Client implements RpcClientInterface
      *
      * @throws UnsupportedOptionException if an option is not supported
      */
-    public function setOptions(array $options)
+    protected function setOptions(array $options)
     {
         foreach($options as $name => $value)
         {
             $this->setOption($name, $value);
         }
+
+        // NB: if by subclassing you make this class non-immutable, you should probably re-validate (rebuild?) the chosen
+        // http client here, unless you do it on send()
     }
 
     /**
@@ -174,14 +185,21 @@ abstract class Client implements RpcClientInterface
         {
             throw new UnsupportedOptionException("Option $option is not supported");
         }
+
+        return $this->options[$option];
     }
 
-    public function setRequestFactory(RequestFactory $requestFactory)
+    public function getOptionsList()
     {
-        $this->requestFactory = $requestFactory;
+        return array_keys($this->options);
     }
 
-    public function setHTTPClient(HttpClientInterface $client)
+    protected function setHTTPRequestFactory(RequestFactory $requestFactory)
+    {
+        $this->httpRequestFactory = $requestFactory;
+    }
+
+    protected function setHTTPClient(HttpClientInterface $client)
     {
         $this->httpClient = $client;
     }

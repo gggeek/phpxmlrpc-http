@@ -7,13 +7,7 @@ interface Response
     /**
      * @param Value|Fault|\Exception|string|mixed $value the value to initialize the Response with
      */
-    public function __construct($value = null);
-
-    /**
-     * @param Value|Fault|string|mixed $value
-     * @return self
-     */
-    public function setValue($value);
+    public function __construct($value);
 
     /**
      * Returns the error code of the response.

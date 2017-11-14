@@ -14,23 +14,19 @@ abstract class Request implements RpcRequestInterface
 
     public function __construct($methodName, $params = array())
     {
-        $this->method($methodName);
+        $this->setMethodName($methodName);
         foreach ($params as $param) {
             $this->addParam($param);
         }
     }
 
-    public function method($methodName = null)
+    protected function setMethodName($methodName)
     {
-        if ($methodName !== null) {
-            $this->validateMethodName($methodName);
-            $this->methodName = $methodName;
-        }
-
-        return $this->methodName;
+        $this->validateMethodName($methodName);
+        $this->methodName = $methodName;
     }
 
-    public function addParam($param)
+    protected function addParam($param)
     {
         $this->validateParam($param);
         $this->params[] = $param;
@@ -60,7 +56,7 @@ abstract class Request implements RpcRequestInterface
      */
     protected function validateMethodName($methodName)
     {
-        // left for subclasses to implement
+        // left for subclasses to override
     }
 
     /**

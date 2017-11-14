@@ -9,6 +9,7 @@ class MessageFactoryDiscovery
 {
     /**
      * @return MessageFactoryInterface
+     *
      * @todo make this a bit more flexible
      */
     public static function find()
