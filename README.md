@@ -1,12 +1,12 @@
-HTTPRPC for PHP
-===============
+HTTPRPC for PHP - HTTP Transport
+================================
 
 A php library for building http-based RPC clients and servers.
 
-This is the core set of classes and interfaces, which is used by different packages implementing the different protocols:
-- XML-RPC
-- JSON-RPC
-- SOAP
+This package contains the set of classes and interfaces which implement the HTTP
+transport layer.
+
+It aims to be compliant with PSR-7, HTTPlug and other forthcoming standards.
 
 License
 -------

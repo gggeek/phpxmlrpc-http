@@ -26,7 +26,7 @@
         "ext-mbstring": "Needed to allow reception of requests/responses in character sets other than ASCII,LATIN-1,UTF-8"
     },
     "autoload": {
-        "psr-4": {"PhpHttpRpc\\": "src/"}
+        "psr-4": {"PhpHttpRpc\\HTTP\\": "src/"}
     },
     "config": {
         "secure-http": false
