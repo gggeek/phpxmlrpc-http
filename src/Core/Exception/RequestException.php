@@ -11,6 +11,8 @@ use PhpHttpRpc\HTTP\API\Exception\RequestException as RequestExceptionInterface;
  * Examples:
  *      - Request is invalid (eg. method is missing)
  *      - Runtime request errors (like the body stream is not seekable)
+ *
+ * @todo implement the corresponding HTTP-Client exception interface when it will exist (and we move to php7 as requirement)
  */
 class RequestException extends \Exception implements RequestExceptionInterface
 {

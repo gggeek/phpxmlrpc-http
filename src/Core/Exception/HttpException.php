@@ -11,6 +11,8 @@ use PhpHttpRpc\HTTP\API\Exception\HttpException as HttpExceptionInterface;
  *
  * This exception MAY be thrown on HTTP response codes 4xx and 5xx.
  * This exception MUST NOT be thrown when using the client's default configuration.
+ *
+ * @todo implement the corresponding HTTP-Client exception interface when it will exist (and we move to php7 as requirement)
  */
 class HttpException extends \Exception implements HttpExceptionInterface
 {
