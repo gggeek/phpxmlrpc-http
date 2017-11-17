@@ -1,9 +1,9 @@
 <?php
 
-namespace PhpHttpRpc\HTTP\Discovery;
+namespace PhpHttpRpc\HTTP\Core\Discovery;
 
 use Http\Message\MessageFactory as MessageFactoryInterface;
-use PhpHttpRpc\HTTP\MessageFactory;
+use PhpHttpRpc\HTTP\Core\MessageFactory;
 
 class MessageFactoryDiscovery
 {

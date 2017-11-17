@@ -1,6 +1,6 @@
 <?php
 
-namespace PhpHttpRpc\HTTP;
+namespace PhpHttpRpc\HTTP\Core;
 
 use Psr\Http\Message\UriInterface;
 use Psr\Http\Message\RequestInterface;

@@ -1,9 +1,9 @@
 <?php
 
-namespace PhpHttpRpc\HTTP\Discovery;
+namespace PhpHttpRpc\HTTP\Core\Discovery;
 
 use Http\Client\HttpClient;
-use PhpHttpRpc\HTTP\Client;
+use PhpHttpRpc\HTTP\Core\Client;
 
 class HttpClientDiscovery
 {
