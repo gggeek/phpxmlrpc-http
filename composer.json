@@ -1,5 +1,5 @@
 {
-    "name": "phpxmlrpc/http",
+    "name": "phpxmlrpcng/http",
     "description": "A php library for building rpc-style http clients and servers",
     "license": "BSD-3-Clause",
     "homepage": "http://gggeek.github.io/phpxmlrpc-http/",
@@ -10,7 +10,7 @@
         "php-http/message-factory": "~1.0"
     },
     "require-dev": {
-        "phpxmlrpc/debugger": "dev-master",
+        "phpxmlrpcng/debugger": "dev-master",
         "phpunit/phpunit": ">=4.0.0, <6.0.0",
         "phpunit/phpunit-selenium": "*",
         "codeclimate/php-test-reporter": "dev-master",
